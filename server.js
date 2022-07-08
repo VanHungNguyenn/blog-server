@@ -1,5 +1,6 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const createError = require('http-errors')
 require('dotenv').config()
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
@@ -47,7 +48,17 @@ app.use('/api/users', usersRoute)
 app.use('/api/posts', postsRoute)
 app.use('/api/categories', categoriesRoute)
 
-const PORT = 5694
+app.use((req, res, next) => {
+	next(createError(404))
+})
+app.use((err, req, res, next) => {
+	res.status(err.status || 500)
+	res.json({
+		message: err.message,
+	})
+})
+
+const PORT = 5678
 
 app.listen(PORT, () => {
 	console.log(`Server started at http://localhost:${PORT}`)
